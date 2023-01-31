@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "898829146229",
+    "project_id": "login-form-test-d31a4",
+    "storage_bucket": "login-form-test-d31a4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:898829146229:android:4308c56535a8db8ef9003c",
+        "android_client_info": {
+          "package_name": "com.example.lession_2_login_form"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "898829146229-76l0vf5jaiq1vsqo5hsilmhhao2jr4li.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA7i7feoHPOTP6oF3GWFxKSg0qXljyDi28"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "898829146229-76l0vf5jaiq1vsqo5hsilmhhao2jr4li.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
