@@ -17,9 +17,11 @@ class MyTextField extends StatefulWidget {
 
 class _MyTextFieldState extends State<MyTextField> {
   @override
+  void initState() {
+    super.initState();
+  }
+  @override
   Widget build(BuildContext context) {
-
-
     return TextFormField(
       obscureText: widget.obscureText,
       cursorColor: Colors.grey,

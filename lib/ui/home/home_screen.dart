@@ -1,11 +1,26 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:lession_2_login_form/login/login_screen.dart';
-import 'package:lession_2_login_form/profile/profile_screen.dart';
+import 'package:lession_2_login_form/base/fire_base/fire_auth.dart';
 
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+import '../auth/login/login_screen.dart';
+import '../profile/profile_screen.dart';
 
+class HomeScreen extends StatefulWidget {
+  final User? user;
+  const HomeScreen({super.key, required this.user});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  final Auth _auth = Auth();
+  late User? user;
+  @override
+  void initState() {
+    user = widget.user;
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -15,7 +30,7 @@ class HomeScreen extends StatelessWidget {
       ),
       body: Center(
         child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-          Text(
+          const Text(
             "Home Screen",
             style: TextStyle(fontSize: 18),
           ),
@@ -23,20 +38,20 @@ class HomeScreen extends StatelessWidget {
           ElevatedButton(
               onPressed: () {
                 Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => ProfileScreen(),
+                  builder: (context) => ProfileScreen(user: user),
                 ));
               },
-              child: Text(
+              child: const Text(
                 "Profile",
                 style: TextStyle(fontSize: 20),
               )),
           //nút đăng xuất
           ElevatedButton(
               onPressed: () async {
-                await FirebaseAuth.instance.signOut();
-                Navigator.of(context).pushReplacement(MaterialPageRoute(
-                  builder: (context) => LoginScreen(),
-                ));
+                await _auth.signOut();
+                Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(
+                  builder: (context) => const LoginScreen(),
+                ),(route) => false,);
               },
               child: const Text(
                 'Sign out',

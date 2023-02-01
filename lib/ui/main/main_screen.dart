@@ -1,14 +1,14 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:lession_2_login_form/home/home_screen.dart';
 
-import '../login/login_screen.dart';
+import '../../base/fire_base/fire_auth.dart';
+import '../auth/login/login_screen.dart';
+import '../home/home_screen.dart';
+
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -31,30 +31,32 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  //initialize Firebase
+  /*//initialize Firebase
   Future<FirebaseApp> _initializeFirebase() async {
     FirebaseApp firebaseApp = await Firebase.initializeApp();
     //Nếu đã đăng nhập thì sẽ nhảy sang trang HomeScreen luôn
-    User? user = FirebaseAuth.instance.currentUser;
+    *//*User? user = FirebaseAuth.instance.currentUser;
     if (user != null) {
-      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => HomeScreen(),));
-    }
+      showDialog(context: context, builder: (context) => const Center(child: CircularProgressIndicator(),),);
+      Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => HomeScreen(user: user),), (route) => false);
+    }*//*
     return firebaseApp;
-  }
-
+  }*/
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Login', style: TextStyle(fontSize: 25),),
-        centerTitle: true,
-      ),
-      body: FutureBuilder(
-        future: _initializeFirebase(),
+      body: StreamBuilder(
+        stream: Auth().authStateChanges,
         builder: (context, snapshot) {
-          if(snapshot.connectionState == ConnectionState.done){
-            return LoginScreen();
+          User? user = FirebaseAuth.instance.currentUser;
+          if(snapshot.hasData){
+            return HomeScreen(user: user);
+          }else if(!snapshot.hasData){
+            return const LoginScreen();
           }
+          /*if(snapshot.connectionState == ConnectionState.done){
+            return LoginScreen();
+          }*/
           return const Center(
             child: CircularProgressIndicator(),
           );

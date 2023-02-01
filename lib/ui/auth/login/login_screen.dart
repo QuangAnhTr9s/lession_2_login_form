@@ -1,9 +1,14 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:lession_2_login_form/base/fire_base/fire_auth.dart';
+import 'package:lession_2_login_form/custom_widget/custom_circle_button.dart';
+import 'package:lession_2_login_form/custom_widget/custom_divider.dart';
 import 'package:lession_2_login_form/custom_widget/custom_textfield.dart';
-import 'package:lession_2_login_form/home/home_screen.dart';
-import 'package:lession_2_login_form/login/login_screen_bloc.dart';
-import 'package:lession_2_login_form/sign_up/sign_up_screen.dart';
+
+import '../../home/home_screen.dart';
+import '../sign_up/sign_up_screen.dart';
+import 'login_screen_bloc.dart';
+
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -16,41 +21,23 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-
-
   //init bloc
   final LoginScreenBloc _loginScreenBloc = LoginScreenBloc();
 
   //TextEditingController
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  //
+  String _wrongLogin = '';
+
+  //fire auth
+  final Auth _auth = Auth();
 
   @override
   void dispose() {
     _loginScreenBloc.dispose();
     super.dispose();
   }
-  //Login function
-  static Future<User?> loginUsingEmail(
-      {required String email,
-        required String password,
-        required BuildContext context}) async {
-    FirebaseAuth auth = FirebaseAuth.instance;
-    User? user;
-    try {
-      UserCredential userCredential = await auth.signInWithEmailAndPassword(
-          email: email, password: password);
-      user = userCredential.user;
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'user-not-found') {
-        print('No user found for that email.');
-      } else if (e.code == 'wrong-password') {
-        print('Wrong password provided.');
-      }
-    }
-    return user;
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -75,7 +62,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   const Text(
-                    'Sign up',
+                    'Sign in',
                     style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
                   ),
                   //nhập tài khoản
@@ -162,14 +149,24 @@ class _LoginScreenState extends State<LoginScreen> {
                           );
                         }),
                   ),
+
+                  //Text Wrong Login
+                  Padding(padding: const EdgeInsets.all(10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(_wrongLogin, style: const TextStyle(fontSize: 16, color: Colors.red),),
+                      ],
+                    ),),
+
                   // nút đăng ký
                   Padding(
-                    padding: const EdgeInsets.only(top: 30),
+                    padding: const EdgeInsets.only(top: 20),
                     child: _buildButtonSignIn('SIGN IN'),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 30),
-                    child: _buildDivider('OR'),
+                  const Padding(
+                    padding: EdgeInsets.only(top: 30),
+                    child: MyDivider(text: 'OR'),
                   ),
 
                   // Social button
@@ -178,9 +175,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        _buildCircleButton('G', Colors.red),
-                        _buildCircleButton('f', Colors.blue),
-                        _buildCircleButton('in', Colors.lightBlue.shade600),
+                        const MyCircleButton(lable: 'G', color: Colors.red,),
+                        const MyCircleButton(lable: 'f',color: Colors.blue),
+                        MyCircleButton(lable: 'in',color: Colors.lightBlue.shade600),
                       ],
                     ),
                   ),
@@ -200,7 +197,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => SignUpScreen(),
+                                    builder: (context) => const SignUpScreen(),
                                   ));
                             },
                             child: const Text(
@@ -229,33 +226,6 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  /*Widget _buildTextField({
-    required String placeHolder,
-    required TextEditingController textEditingController,
-    required Stream<String> stream,
-    required bool obscureText,
-  }) {
-    return StreamBuilder<String>(
-        stream: stream,
-        builder: (context, snapshotTextField) {
-          return TextFormField(
-            obscureText: obscureText,
-            cursorColor: Colors.grey,
-            controller: textEditingController,
-            decoration: InputDecoration(
-              errorText: snapshotTextField.hasError
-                  ? snapshotTextField.error.toString()
-                  : null,
-              //để null thì khi ko bị lỗi, textfield ko bị bôi đỏ viền
-              hintText: placeHolder,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-            ),
-          );
-        });
-  }*/
-
   Widget _buildButtonSignIn(String label) {
     return Material(
       color: Colors.pink[300],
@@ -282,59 +252,32 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Widget _buildCircleButton(String lable, Color color) {
-    return Container(
-      width: 45,
-      height: 45,
-      decoration: BoxDecoration(
-          color: Colors.transparent,
-          border: Border.all(width: 3, color: color),
-          shape: BoxShape.circle),
-      child: Center(
-          child: Text(
-        lable,
-        style:
-            TextStyle(color: color, fontSize: 20, fontWeight: FontWeight.w900),
-      )),
-    );
-  }
-
-  Widget _buildDivider(String label) {
-    return Row(children: <Widget>[
-      const Expanded(child: Divider()),
-      Container(
-          decoration: BoxDecoration(
-              shape: BoxShape.rectangle,
-              border: Border.all(width: 2, color: Colors.grey),
-              borderRadius: BorderRadius.circular(5)),
-          child: const Padding(
-            padding: EdgeInsets.all(2),
-            child: Text(
-              "Or",
-              style: TextStyle(fontSize: 14, color: Colors.grey),
-            ),
-          )),
-      const Expanded(child: Divider()),
-    ]);
-  }
-
-  void checkValidUser() async{
-    /*// showDialog(context: context, builder: (context) => Center(child: CircularProgressIndicator(),),);
-    try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
-          email: _usernameController.text, password: _passwordController.text);
-    } on FirebaseAuthException catch (e){
-      print(e);
-    }*/
+  Future<void> checkValidUser() async{
     if (_loginScreenBloc.isValidInfo(
         _usernameController.text, _passwordController.text)) {
-      User? user = await loginUsingEmail(
+      try {
+        User? user = await _auth.signInWithEmailAndPassword(
           email: _usernameController.text,
           password: _passwordController.text,
-          context: context);
-      print(user);
-      if (user!= null) {
-        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const HomeScreen(),));
+        );
+        print(user);
+        // final error = FirebaseAuthException(code: )
+        if (user != null) {
+          showDialog(context: context, builder: (context) => const Center(child: CircularProgressIndicator(),),);
+          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => HomeScreen(user: user),), (route) => false);
+        }
+      } on FirebaseAuthException catch (e) {
+        if (e.code == 'user-not-found') {
+          setState(() {
+            _wrongLogin = 'No user found for that email!';
+          });
+          print('No user found for that email.');
+        } else if (e.code == 'wrong-password') {
+          setState(() {
+            _wrongLogin = 'Wrong password!';
+          });
+          print('Wrong password provided.');
+        }
       }
     }
   }
