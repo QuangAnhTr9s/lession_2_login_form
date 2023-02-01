@@ -4,6 +4,7 @@ import 'package:lession_2_login_form/base/fire_base/fire_auth.dart';
 import 'package:lession_2_login_form/custom_widget/custom_circle_button.dart';
 import 'package:lession_2_login_form/custom_widget/custom_divider.dart';
 import 'package:lession_2_login_form/custom_widget/custom_textfield.dart';
+import 'package:lession_2_login_form/shared_preferences/shared_preferences.dart';
 
 import '../../home/home_screen.dart';
 import '../sign_up/sign_up_screen.dart';
@@ -33,6 +34,13 @@ class _LoginScreenState extends State<LoginScreen> {
   //fire auth
   final Auth _auth = Auth();
 
+
+  @override
+  void initState() {
+    super.initState();
+    //mỗi lần vào screen sign in => chưa lưu đăng nhập
+    MySharedPreferences.setSaveSignIn(false);
+  }
   @override
   void dispose() {
     _loginScreenBloc.dispose();
@@ -151,13 +159,35 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
 
                   //Text Wrong Login
-                  Padding(padding: const EdgeInsets.all(10),
+                  _wrongLogin == '' ? const SizedBox() : Padding(padding: const EdgeInsets.only(top: 10),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(_wrongLogin, style: const TextStyle(fontSize: 16, color: Colors.red),),
                       ],
                     ),),
+
+                  //Save login
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 8.0),
+                    child: StreamBuilder<bool>(
+                      stream: _loginScreenBloc.isCheckedwordStream,
+                      builder: (context, snapshot) {
+                        bool isChecked = snapshot.data ?? false;
+                        return Row(mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Checkbox(value: isChecked,
+                              onChanged: (value) async {
+                              _loginScreenBloc.isCheckedBox(value);
+                              //lưu biến isChecked vào Shared Preferences
+                                await MySharedPreferences.setSaveSignIn(value ?? false);
+                            },),
+                            Text(isChecked ? "Don't save sign in" : "Save sign in"),
+                          ],
+                        );
+                      }
+                    ),
+                  ),
 
                   // nút đăng ký
                   Padding(
@@ -271,12 +301,10 @@ class _LoginScreenState extends State<LoginScreen> {
           setState(() {
             _wrongLogin = 'No user found for that email!';
           });
-          print('No user found for that email.');
         } else if (e.code == 'wrong-password') {
           setState(() {
             _wrongLogin = 'Wrong password!';
           });
-          print('Wrong password provided.');
         }
       }
     }

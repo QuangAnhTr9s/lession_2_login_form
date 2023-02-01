@@ -15,16 +15,18 @@ class SignUpScreen extends StatefulWidget {
 
 class _SignUpScreenState extends State<SignUpScreen> {
   //TextEditingController
-  TextEditingController _firstNameController = TextEditingController();
-  TextEditingController _lastNameController = TextEditingController();
-  TextEditingController _emailController = TextEditingController();
-  TextEditingController _passwordController = TextEditingController();
-  TextEditingController _secondPasswordController = TextEditingController();
+  final TextEditingController _firstNameController = TextEditingController();
+  final TextEditingController _lastNameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _secondPasswordController = TextEditingController();
 
   // TextEditingController _emailController = TextEditingController();
-  SignUpScreenBloc _signUpScreenBloc = SignUpScreenBloc();
+  final SignUpScreenBloc _signUpScreenBloc = SignUpScreenBloc();
   //init fire auth
-  Auth _auth = Auth();
+  final Auth _auth = Auth();
+
+  bool value = false;
 
   @override
   void dispose() {
@@ -53,7 +55,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                     Expanded(child: MyTextField(placeHolder: "First Name", textEditingController: _firstNameController, obscureText: false, errorText: null)),
-                    SizedBox(width: 20,), Expanded(child: MyTextField(placeHolder: "Last Name", textEditingController: _lastNameController, obscureText: false, errorText: null)),
+                    const SizedBox(width: 20,), Expanded(child: MyTextField(placeHolder: "Last Name", textEditingController: _lastNameController, obscureText: false, errorText: null)),
                   ],),
                 ),
                 //input email
@@ -90,6 +92,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     _signUpScreenBloc.isCorrectPasswordStream,
                     'Re-enter the password again',
                     _secondPasswordController),
+
+                Checkbox(value: value, onChanged: (newValue) {
+                  setState(() {
+                    value = newValue!;
+                    print(value);
+                    print(newValue);
+                  });
+                },),
 
                 //button Sign up
                 InkWell(

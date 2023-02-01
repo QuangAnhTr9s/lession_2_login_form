@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:lession_2_login_form/shared_preferences/shared_preferences.dart';
 
 import '../../base/fire_base/fire_auth.dart';
 import '../auth/login/login_screen.dart';
@@ -17,7 +18,7 @@ class MyApp extends StatelessWidget {
 
         primarySwatch: Colors.blue,
       ),
-      home: MyHomePage(),
+      home: const MyHomePage(),
     );
   }
 }
@@ -42,6 +43,18 @@ class _MyHomePageState extends State<MyHomePage> {
     }*//*
     return firebaseApp;
   }*/
+  //isSignIn
+  bool isSignIn = false;
+
+  @override
+  void initState() {
+    super.initState();
+    isSignIn = MySharedPreferences.getIsSaveSignIn();
+  }
+  @override
+  void dispose() {
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,6 +63,9 @@ class _MyHomePageState extends State<MyHomePage> {
         builder: (context, snapshot) {
           User? user = FirebaseAuth.instance.currentUser;
           if(snapshot.hasData){
+            if(!isSignIn){
+              return const LoginScreen();
+            }
             return HomeScreen(user: user);
           }else if(!snapshot.hasData){
             return const LoginScreen();
