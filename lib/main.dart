@@ -7,6 +7,7 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   await MySharedPreferences.initSharedPreferences();
+  // bool isSaveSignIn = await MySharedPreferences.getIsSaveSignIn();
   runApp(const MyApp());
 }
 

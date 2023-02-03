@@ -1,3 +1,4 @@
+/*
 class User {
   String email;
 
@@ -42,3 +43,4 @@ class User {
     };
   }
 }
+*/

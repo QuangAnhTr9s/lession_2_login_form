@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:lession_2_login_form/base/fire_base/fire_auth.dart';
+import 'package:lession_2_login_form/network/fire_base/fire_auth.dart';
 import 'package:lession_2_login_form/custom_widget/custom_textfield.dart';
 import 'package:lession_2_login_form/ui/auth/sign_up/sign_up_screen_bloc.dart';
 
